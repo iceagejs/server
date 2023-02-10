@@ -1,14 +1,18 @@
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { WinstonModule } from 'nest-winston'
+import { join } from 'path'
 import * as winston from 'winston'
 import 'winston-daily-rotate-file'
 import AllExceptionFilter from './filters/all.exception.filter'
 import { UnifyResponseInterceptor } from './interceptors/unity-response.intercepotr'
 import LoggerMiddleware from './middlewares/logger.middleware'
 import { getConfig } from './utils'
+// import * as Joi from 'joi'
 
+const config = getConfig()
 @Module({
   imports: [
     WinstonModule.forRoot({
@@ -34,6 +38,16 @@ import { getConfig } from './utils'
       ignoreEnvFile: true,
       isGlobal: true,
       load: [getConfig]
+    }),
+    // TypeOrmModule.forRoot(config.MYSQL_CONFIG),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        ...config.MYSQL_CONFIG,
+        entities: [join(__dirname, './**/*.entity.ts')],
+        logging: ['error']
+      })
     })
   ],
   controllers: [],
