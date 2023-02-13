@@ -9,6 +9,8 @@ const config = getConfig()
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
+  app.setGlobalPrefix('api')
+
   // 开启版本控制
   app.enableVersioning({
     defaultVersion: [VERSION_NEUTRAL],

@@ -1,10 +1,12 @@
+import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
+
 export interface AppConfig {
   GLOBAL_PREFIX: string
   APP_RUN_PORT: number
 
   MYSQL_CONFIG: {
     name: string
-    type: 'mysql'
+    type: any
     host: string
     port: number
     username: string

@@ -10,6 +10,8 @@ import AllExceptionFilter from './filters/all.exception.filter'
 import { UnifyResponseInterceptor } from './interceptors/unity-response.intercepotr'
 import LoggerMiddleware from './middlewares/logger.middleware'
 import { getConfig } from './utils'
+import { UsersModule } from './users/users.module'
+import { User } from './users/entities/user.entity'
 // import * as Joi from 'joi'
 
 const config = getConfig()
@@ -39,16 +41,25 @@ const config = getConfig()
       isGlobal: true,
       load: [getConfig]
     }),
-    // TypeOrmModule.forRoot(config.MYSQL_CONFIG),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        ...config.MYSQL_CONFIG,
-        entities: [join(__dirname, './**/*.entity.ts')],
-        logging: ['error']
-      })
-    })
+      useFactory: (configService: ConfigService) => {
+        const MYSQL_CONFIG = configService.get('MYSQL_CONFIG')
+        return {
+          type: MYSQL_CONFIG.type,
+          host: MYSQL_CONFIG.host,
+          port: MYSQL_CONFIG.port,
+          username: MYSQL_CONFIG.username,
+          password: MYSQL_CONFIG.password,
+          database: MYSQL_CONFIG.database,
+          synchronize: MYSQL_CONFIG.synchronize,
+          entities: [User],
+          logging: ['error']
+        } as any
+      }
+    }),
+    UsersModule
   ],
   controllers: [],
   providers: [
