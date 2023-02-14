@@ -11,10 +11,8 @@ import { UnifyResponseInterceptor } from './interceptors/unity-response.intercep
 import LoggerMiddleware from './middlewares/logger.middleware'
 import { getConfig } from './utils'
 import { UsersModule } from './users/users.module'
-import { User } from './users/entities/user.entity'
+import { RolesModule } from './roles/roles.module'
 // import * as Joi from 'joi'
-
-const config = getConfig()
 @Module({
   imports: [
     WinstonModule.forRoot({
@@ -54,12 +52,13 @@ const config = getConfig()
           password: MYSQL_CONFIG.password,
           database: MYSQL_CONFIG.database,
           synchronize: MYSQL_CONFIG.synchronize,
-          entities: [User],
+          entities: [join(__dirname, '**/**.entity{.ts,.js}')],
           logging: ['error']
-        } as any
+        }
       }
     }),
-    UsersModule
+    UsersModule,
+    RolesModule
   ],
   controllers: [],
   providers: [
