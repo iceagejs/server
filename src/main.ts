@@ -1,4 +1,4 @@
-import { VersioningType, VERSION_NEUTRAL } from '@nestjs/common'
+import { ValidationPipe, VersioningType, VERSION_NEUTRAL } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston'
 import { AppModule } from './app.module'
@@ -19,6 +19,8 @@ async function bootstrap() {
     defaultVersion: [VERSION_NEUTRAL],
     type: VersioningType.URI
   })
+
+  app.useGlobalPipes(new ValidationPipe())
 
   // 生成文档
   generateDocument(app)

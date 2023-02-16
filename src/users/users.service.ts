@@ -11,9 +11,12 @@ export class UsersService {
   ) {}
 
   async create(user: Partial<User>) {
-    user.user_id = this.generateUserId()
+    // user.user_id = this.generateUserId()
+    console.log(user)
     const userTmp = await this.usersRepository.create(user)
-    return this.usersRepository.save(userTmp)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = await this.usersRepository.save(userTmp)
+    return result
   }
 
   findAll() {
@@ -25,8 +28,8 @@ export class UsersService {
     return this.usersRepository.findOne({where: {user_id}})
   }
 
-  findOne(id: number) {
-    return this.usersRepository.findOne({where: {id}})
+  findOne(id: string) {
+    return this.usersRepository.findOne({where: {user_id: id}})
   }
 
   update(id: string, user: User) {
@@ -35,6 +38,15 @@ export class UsersService {
 
   remove(id: string) {
     return this.usersRepository.delete(id)
+  }
+
+  findProfile(uid: string) {
+    return this.usersRepository.findOne({
+      where: {
+        user_id: uid
+      },
+      relations: ['profile']
+    })
   }
 
   /**

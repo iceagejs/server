@@ -50,7 +50,7 @@ export class Profile {
   @Column()
   last_login_ip: string
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, user => user.profile)
   @JoinColumn({name: 'user_id'})
   user: User
 }

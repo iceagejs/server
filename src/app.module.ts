@@ -12,6 +12,7 @@ import LoggerMiddleware from './middlewares/logger.middleware'
 import { getConfig } from './utils'
 import { UsersModule } from './users/users.module'
 import { RolesModule } from './roles/roles.module'
+import { LogsModule } from './logs/logs.module'
 // import * as Joi from 'joi'
 
 @Global()
@@ -60,7 +61,8 @@ import { RolesModule } from './roles/roles.module'
       }
     }),
     UsersModule,
-    RolesModule
+    RolesModule,
+    LogsModule
   ],
   controllers: [],
   providers: [
@@ -74,7 +76,7 @@ import { RolesModule } from './roles/roles.module'
       useClass: UnifyResponseInterceptor,
     }
   ],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule, UsersModule]
 })
 export class AppModule {
   // 应用全局中间件

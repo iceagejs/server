@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 
 @ApiTags('用户')
@@ -14,12 +13,7 @@ export class UsersController {
     summary: '创建用户'
   })
   create(@Body() createUserDto: CreateUserDto) {
-    const user = {
-      user_id: 'test',
-      username: 'test',
-      password: 'test',
-    }
-    return this.usersService.create(user)
+    return this.usersService.create(createUserDto)
   }
 
   @Get()
@@ -28,12 +22,20 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.usersService.findOne(id)
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id)
+  }
+
+  @Post('/profile')
+  async getUserProfile(@Body() param: any) {
+    const { uid } = param
+    console.log(param)
+    const result = await this.usersService.findProfile(uid)
+    return result
   }
 }
