@@ -1,5 +1,6 @@
 import { VersioningType, VERSION_NEUTRAL } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston'
 import { AppModule } from './app.module'
 import { generateDocument } from './doc'
 import { getConfig } from './utils'
@@ -8,6 +9,8 @@ const config = getConfig()
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER))
 
   app.setGlobalPrefix('api')
 

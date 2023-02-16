@@ -1,26 +1,50 @@
 import { Injectable } from '@nestjs/common'
-import { CreateUserDto } from './dto/create-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { User } from './entities/user.entity'
+import * as nanoid from 'nanoid'
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user'
+  constructor(
+    @InjectRepository(User) private usersRepository: Repository<User>,
+  ) {}
+
+  async create(user: Partial<User>) {
+    user.user_id = this.generateUserId()
+    const userTmp = await this.usersRepository.create(user)
+    return this.usersRepository.save(userTmp)
   }
 
   findAll() {
-    return `This action returns all users`
+    return this.usersRepository.find()
+  }
+
+  async findByUsername(username: string) {
+    const { user_id } = await this.usersRepository.findOne({where: {username}})
+    return this.usersRepository.findOne({where: {user_id}})
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`
+    return this.usersRepository.findOne({where: {id}})
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`
+  update(id: string, user: User) {
+    return this.usersRepository.update(id, user)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`
+  remove(id: string) {
+    return this.usersRepository.delete(id)
+  }
+
+  /**
+   * 生成用户id
+   * @param len 生成的id长度
+   * @returns { string }
+   */
+  generateUserId(len = 30) {
+    const str = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    const id = nanoid.customAlphabet(str, len)
+    return id()
   }
 }

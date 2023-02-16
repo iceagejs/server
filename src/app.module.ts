@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
+import { Global, MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -13,6 +13,8 @@ import { getConfig } from './utils'
 import { UsersModule } from './users/users.module'
 import { RolesModule } from './roles/roles.module'
 // import * as Joi from 'joi'
+
+@Global()
 @Module({
   imports: [
     WinstonModule.forRoot({
@@ -72,10 +74,11 @@ import { RolesModule } from './roles/roles.module'
       useClass: UnifyResponseInterceptor,
     }
   ],
+  exports: [TypeOrmModule]
 })
 export class AppModule {
   // 应用全局中间件
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL })
+    consumer.apply(LoggerMiddleware).forRoutes({ path: 'api/*', method: RequestMethod.ALL })
   }
 }

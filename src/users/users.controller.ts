@@ -14,7 +14,12 @@ export class UsersController {
     summary: '创建用户'
   })
   create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto)
+    const user = {
+      user_id: 'test',
+      username: 'test',
+      password: 'test',
+    }
+    return this.usersService.create(user)
   }
 
   @Get()
@@ -23,17 +28,12 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id)
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto)
+  findOne(@Param('id') id: number) {
+    return this.usersService.findOne(id)
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id)
+    return this.usersService.remove(id)
   }
 }
